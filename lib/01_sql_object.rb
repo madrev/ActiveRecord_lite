@@ -30,15 +30,27 @@ class SQLObject
   end
 
   def self.all
-    # ...
+    self.parse_all(
+    DBConnection.execute(<<-SQL)
+      SELECT #{self.table_name}.* FROM #{self.table_name}
+    SQL
+    )
   end
 
   def self.parse_all(results)
-    # ...
+    result = []
+    results.each do |attributes|
+      instance = self.new(attributes)
+      result << instance
+    end
+    result
   end
 
   def self.find(id)
-    # ...
+    result = DBConnection.execute(<<-SQL, id)
+      SELECT #{self.table_name}.* FROM #{self.table_name} WHERE id = ?
+    SQL
+    result.empty? ? nil : self.new(result.first)
   end
 
   def initialize(params = {})
@@ -55,7 +67,7 @@ class SQLObject
   end
 
   def attribute_values
-    # ...
+    self.class.columns.map {|column| self.send(column.to_sym)}
   end
 
   def insert
