@@ -1,7 +1,6 @@
 require_relative '02_searchable'
 require 'active_support/inflector'
 
-# Phase IIIa
 class AssocOptions
   attr_accessor(
     :foreign_key,
@@ -43,6 +42,7 @@ module Associatable
       pkey = options_obj.primary_key
       options_obj.model_class.where(pkey => fkey_value).first
     end
+    self.assoc_options[name] = options_obj
   end
 
   def has_many(name, options = {})
@@ -56,7 +56,7 @@ module Associatable
   end
 
   def assoc_options
-    # Wait to implement this in Phase IVa. Modify `belongs_to`, too.
+    @assoc_options ||= {}
   end
 end
 
