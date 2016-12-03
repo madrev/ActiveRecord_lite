@@ -15,7 +15,7 @@ class SQLObject
   def self.finalize!
     self.columns.each do |column|
       define_method(column.to_s) { attributes[column] }
-      define_method("#{column}=") {|value| attributes[column] = value}
+      define_method("#{column}=") { |value| attributes[column] = value }
     end
   end
 
@@ -65,12 +65,12 @@ class SQLObject
   end
 
   def attribute_values
-    self.class.columns.map {|column| self.send(column.to_sym)}
+    self.class.columns.map { |column| self.send(column.to_sym) }
   end
 
   def insert
     col_names = self.class.columns.map(&:to_s).join(", ")
-    question_marks = Array.new(columns.count){"?"}.join(", ")
+    question_marks = Array.new(columns.count) { "?" }.join(", ")
 
     DBConnection.execute(<<-SQL, *attribute_values)
       INSERT INTO #{self.class.table_name} (#{col_names})
@@ -80,7 +80,7 @@ class SQLObject
   end
 
   def update
-    set_clause = columns.map {|col_name| "#{col_name} = ?"}.join(", ")
+    set_clause = columns.map { |col_name| "#{col_name} = ?" }.join(", ")
 
     DBConnection.execute(<<-SQL, *attribute_values, self.id)
       UPDATE #{self.class.table_name}
